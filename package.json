@@ -1,0 +1,28 @@
+{
+  "name": "url-shortener-microservice-fcc-sp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "jade": "^1.11.0",
+    "mongodb": "^2.2.11",
+    "normalize-url": "^1.8.0",
+    "valid-url": "^1.0.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SebastianPetak/url-shortener-microservice-fcc-sp.git"
+  },
+  "author": "Sebastian Petak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SebastianPetak/url-shortener-microservice-fcc-sp/issues"
+  },
+  "homepage": "https://github.com/SebastianPetak/url-shortener-microservice-fcc-sp#readme"
+}
