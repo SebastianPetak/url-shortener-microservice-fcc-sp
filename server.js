@@ -17,17 +17,20 @@ var re = new RegExp("^[0-9]{8}$", "g");
 });*/
 
 
-app.get('/:paramUrl', function(req,res) {
-	var paramUrl = req.params.paramUrl;
-	console.log("URL Parameter: " + req.params.paramUrl);
+app.get('/*', function(req,res) {
+	var paramUrl = req.url.substr(1);
+	console.log("URL Parameter: " + paramUrl);
 	if (validUrl.isUri(paramUrl)) {
 		console.log("URL is valid");
 		paramUrl = normalizeUrl(paramUrl);
-		console.log("about to send url to api");	
-  //	api(paramUrl);
+		console.log("sending url to api");	
+  		api(paramUrl, function() {
+		    res.end();
+		});
 	} else if (paramUrl.match(re)) {
 		console.log("URL parameter is a valid short-URL format");
 		// find and return document with matching short-URL value
+		res.end()
 	} else {
 		console.log("URL parameter is not a valid URL");
 		res.end();
@@ -36,38 +39,38 @@ app.get('/:paramUrl', function(req,res) {
 	
 
 var api = function(paramUrl) {
-	MongoClient.connect(dbUrl, function(e, db) {
-		assert.equal(e, null);
-		console.log("Connected sucessfully to server");
+    MongoClient.connect(dbUrl, function(e, db) {
+	assert.equal(e, null);
+	console.log("Connected sucessfully to server");
 		
-		findUrl(db, paramUrl, function(docs) {
-			if (docs) {
-				insertUrl(db, paramUrl, function() {
-					db.close();
-				});
-			} else { 
-				db.close();
-			};
+	findUrl(db, paramUrl, function(docs) {
+	    if (docs.length > 0) {
+		console.log("Short URL already exists: " + docs);
+		console.log("docs[0] instead: " + docs[0]);
+		db.close();	
+	    } else {
+		console.log("Short URL does not exist"); 
+	        insertUrl(db, paramUrl, function(result) {
+		    console.log(result)    
+		    db.close()
 		});
+	    };
 	});
+    });
 };
 
 var findUrl = function(db, paramUrl, callback) {
 	// get the sites collection
 	var collection = db.collection('sites');
 	// find documents with url the user passed
-	collection.findOne({'url': paramUrl}, function(e, docs) {
-		if (docs[docs.length - 1] != undefined) {
-			res.send("Short URL already exists: " + docs);
-			callback();
-		} else {
-			callback(null);	
-		}
-	})
+	var allSitesArray = collection.find({'url': paramUrl}).toArray()
+	if (allSitesArray.length > 0)
+	};
 };
 
 var insertUrl = function(db, paramUrl, callback) {
 	// get the sites collection
+	console.log("Inserting document has started")
 	var collection = db.collection('sites');
 	// insert the url and a newly generated shorturl
 	collection.insert(
@@ -82,7 +85,7 @@ var insertUrl = function(db, paramUrl, callback) {
 			}
 			callback(result);
 		});
-}
+};
 
 var generateShortUrl = function(paramUrl) {
 	// return a 8 character string consisting of digits
