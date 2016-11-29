@@ -1,7 +1,5 @@
-//require('dotenv').config();
 var express = require('express');
 var app = express();
-var path = require('path');
 var MongoClient = require('mongodb').MongoClient
 	,assert = require('assert');
 var dbUrl = 'mongodb://localhost:27017/data';
@@ -9,28 +7,11 @@ var url = require('url');
 var validUrl = require('valid-url');
 const normalizeUrl = require('normalize-url');
 
-var api = require('./app/api/url-shortener.js');
-var routes = require('.app/routes/index.js');
-// set the view engine to ejs
-// use res.render to load up an ejs view file
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-routes(app, db);
-api(app, db);
-
-var re = new RegExp("^[0-9]{7}$", "g");
-// Number(process.env.PORT || 8000);
-// MongoClient.connect(process.env.MONGOLAB_URI || dbUrl, function(e, db) { ... copied from somewhere
-
-/*app.get('/favicon.ico', function(req,res) {
-	res.sendStatus(200);
-	console.log('favicon.ico Requested');
-});*/
-
-app.get('/', function(req,res) {
-	res.render('index');
-});
+module.exports = function(app, db) {
+	app.get('/', function(req,res) {
+		res.render('index');
+	});
+};
 
 app.get('/*', function(req,res) {
 	var paramUrl = req.url.substr(1);
