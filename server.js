@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var path = require('path');
-var dbUrl = /*process.env.MONGOLAB_URI*/ 'mongodb://localhost:27017/data';
+var dbUrl = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/data';
 
 var api = require('./app/api/url-shortener.js');
 var routes = require('./app/routes/index.js');
