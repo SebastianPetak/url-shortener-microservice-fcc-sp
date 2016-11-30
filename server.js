@@ -1,13 +1,7 @@
-//require('dotenv').config();
 var express = require('express');
 var app = express();
 var path = require('path');
-var MongoClient = require('mongodb').MongoClient
-	,assert = require('assert');
-var dbUrl = process.env.MONGOLAB_URI// || 'mongodb://localhost:27017/data';
-var url = require('url');
-var validUrl = require('valid-url');
-const normalizeUrl = require('normalize-url');
+var dbUrl = /*process.env.MONGOLAB_URI*/ 'mongodb://localhost:27017/data';
 
 var api = require('./app/api/url-shortener.js');
 var routes = require('./app/routes/index.js');
