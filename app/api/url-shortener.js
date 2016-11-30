@@ -1,21 +1,16 @@
 //require('dotenv').config();
 var express = require('express');
 var app = express();
-var path = require('path');
+//var path = require('path');
 var MongoClient = require('mongodb').MongoClient
 	,assert = require('assert');
-var dbUrl = 'mongodb://localhost:27017/data';
-var url = require('url');
+//var url = require('url');
 var validUrl = require('valid-url');
 const normalizeUrl = require('normalize-url');
 
-var api = require('./app/api/url-shortener.js');
-var routes = require('.app/routes/index.js');
-
-
 var re = new RegExp("^[0-9]{7}$", "g");
 
-module.exports = function(app) {
+module.exports = function(app, dbUrl) {
 	app.get('/*', function(req,res) {
 		var paramUrl = req.url.substr(1);
 		console.log("URL Parameter: " + paramUrl);
@@ -36,7 +31,7 @@ module.exports = function(app) {
 					var parsedJSON = JSON.parse(response);
 					var originalURL = parsedJSON.original_url
 					res.redirect(originalURL);
-					console.log("User redirected to: " + originalURL)
+					console.log("User redirected to: " + originalURL + "\n")
 				} else {
 					console.log("Short URL does not exist\n");
 					res.send(JSON.stringify({"error": "Short URL does not exist"}));
@@ -145,4 +140,3 @@ module.exports = function(app) {
 		return String(Date.now()).slice(-4) + (Math.floor(Math.random() * (999 - 100) + 100));
 	};
 };
-app.listen(Number(process.env.PORT || 8000));
