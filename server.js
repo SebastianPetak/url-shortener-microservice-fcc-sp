@@ -12,6 +12,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 routes(app, dbUrl);
-api(app, dbUrl);
+api(app);
 
 app.listen(Number(process.env.PORT || 8001));
