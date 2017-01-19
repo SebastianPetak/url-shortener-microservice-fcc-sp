@@ -1,9 +1,10 @@
 var assert = require('assert');
+var winston = require('winston');
 
 // if the original url wasn't in the database, insert it anad return it
 module.exports = function(db, paramUrl, callback) {
 	// get the sites collection
-	console.log('Inserting document...');
+	winston.log('info', 'Inserting document...');
 	var collection = db.collection('sites');
 	// insert the url and a newly generated shorturl
 	collection.insert(

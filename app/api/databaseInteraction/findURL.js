@@ -1,8 +1,9 @@
+var winston = require('winston');
+
 //	Search the database for the short_url or the original_url
 // depending on the handler function
-
 module.exports = function(db, key,paramUrl, callback) {
-	console.log('Querying...');
+	winston.log('info', 'Querying...');
 	// get the sites collection
 	var sites = db.collection('sites');
 	// set key for findOne function
@@ -15,7 +16,7 @@ module.exports = function(db, key,paramUrl, callback) {
 		}	else if (result) {
 			callback(result);
 		}	else {
-			console.log('Matching query does not exist');
+			winston.log('info', 'Matching query does not exist');
 			callback(null);
 		}
 	});

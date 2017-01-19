@@ -18,3 +18,5 @@ build/Release
 
 *.db
 .env
+
+node_modules
