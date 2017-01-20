@@ -1,8 +1,8 @@
 var winston = require('winston');
 
 //	Search the database for the short_url or the original_url
-// depending on the handler function
-module.exports = function(db, key,paramUrl, callback) {
+// depending on the key
+module.exports = function(db, key, paramUrl, callback) {
 	winston.log('info', 'Querying...');
 	// get the sites collection
 	var sites = db.collection('sites');

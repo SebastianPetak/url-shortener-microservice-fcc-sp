@@ -12,14 +12,13 @@ module.exports = function(paramUrl, dbURL, callback) {
       // if the short url was in the database, return it
       // the api will redirect the user tot he original url
 			if (result) {
-				var response = JSON.stringify({
+				winston.log('info', 'Short URL exists: \n' + JSON.stringify({
 					original_url: result.original_url,
 					short_url: result.short_url
-				});
-				winston.log('info', 'Short URL exists: \n' + response);
+				}));
 				db.close();
 				winston.log('info', 'database closed');
-				callback(response);
+				callback(result);
 			// if the short url wasn't in the database, we will return an error
 			} else {
 				var responseNull = null;

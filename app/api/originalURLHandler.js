@@ -12,26 +12,24 @@ module.exports = function(paramUrl, dbURL, callback) {
 		findURL(db,'original_url', paramUrl, function(result) {
 			// if we find a match in the database, just return the match
 			if (result) {
-				var response = JSON.stringify({
+				winston.log('info', 'URL already exists in the database: ' + JSON.stringify({
 					original_url: result.original_url,
 					short_url: result.short_url
-				});
-				winston.log('info', 'URL already exists in the database: ' + response);
+				}));
 				db.close();
 				winston.log('info', 'database closed');
-				callback(response);
+				callback('URLExisted', result);
 			// if the url wasn't in the database, insert it
 			} else {
 				winston.log('info', 'New URL being send to insertURL');
 				insertURL(db, paramUrl, function(result) {
-					var response = JSON.stringify({
+					winston.log('info', 'New data inserted into database: \n' + JSON.stringify({
 						original_url: result.ops[0].original_url,
 						short_url: result.ops[0].short_url
-					});
-					winston.log('info', 'New data inserted into database: \n' + response);
+					}));
 					db.close();
 					winston.log('info', 'database closed');
-					callback(response);
+					callback('URLNew', result);
 				});
 			}
 		});

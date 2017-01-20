@@ -5,6 +5,7 @@ var winston = require('winston');
 var originalURLHandler = require('../api/originalURLHandler.js');
 var shortURLHandler = require('../api/shortURLHandler.js');
 
+// Used to determine if url parameter is a short URL
 var shortURLRegExp = new RegExp('^[0-9]{7}$', 'g');
 
 module.exports = function(app, dbURL) {
@@ -21,10 +22,20 @@ module.exports = function(app, dbURL) {
 			// normalizes url to prevent duplication under different names e.g. https://www.google.com // https://google.com
 			paramUrl = normalizeUrl(paramUrl);
 			winston.log('info', 'Sending normalized URL parameter to URL handler as: ' + paramUrl);
-			originalURLHandler(paramUrl, dbURL, function(response) {
-				var parsedJSON = JSON.parse(response);
-				var fullShortURL = parsedJSON.short_url;
-				res.send(response + ' Your Short URL is: https://shurl-sp.herokuapp.com/' + fullShortURL);
+			originalURLHandler(paramUrl, dbURL, function(type, response) {
+				// working with response from findURL
+				if (type == 'URLExisted') {
+					res.status(200).json({
+						original_url: response.original_url,
+						short_url: response.short_url
+					});
+				} else {
+				// working with response from insertURL
+					res.status(200).json({
+						original_url: response.ops[0].original_url,
+						short_url: response.ops[0].short_url
+					});
+				}
 				winston.log('info', 'response has ended\n');
 			});
 
@@ -34,21 +45,23 @@ module.exports = function(app, dbURL) {
 			// find and return document with matching short-URL value
 			shortURLHandler(paramUrl, dbURL, function(response) {
 				if (response) {
-					var parsedJSON = JSON.parse(response);
-					var originalURL = parsedJSON.original_url;
 					// this redirects user to the original_url value stored in the database
-					res.redirect(originalURL);
-					winston.log('info', 'User redirected to: ' + originalURL + '\n');
+					// with status 302 for found
+					res.redirect(response.original_url);
+					winston.log('info', 'User redirected to: ' + response.original_url + '\n');
 				} else {
 					winston.log('info', 'Short URL does not exist\n');
-					res.send(JSON.stringify({'error': 'Short URL does not exist'}));
+					res.status(500).json({error: 'Short URL does not exist'});
 				}
 			});
 
 		// otherwise parameter wasn't in short url or original url format
 		} else {
 			winston.log('info', 'URL parameter is not a valid URL\n');
-			res.send(JSON.stringify({'error': 'No short url found for given input and input is not a valid url'}));
+			res.status(404).json({
+				error: 'No short url found for given input and input is not a valid url'
+			});
+			//res.status(500).json({error: 'No short url found for given input and input is not a valid url'});
 		}
 	});
 };
