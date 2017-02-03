@@ -1,5 +1,4 @@
-var MongoClient = require('mongodb').MongoClient,
-	assert = require('assert');
+var MongoClient = require('mongodb').MongoClient;
 var winston = require('winston');
 
 var findURL = require('./databaseInteraction/findURL.js');
@@ -7,8 +6,7 @@ var insertURL = require('./databaseInteraction/insertURL.js');
 
 module.exports = function(paramUrl, dbURL, callback) {
 	MongoClient.connect(dbURL, function(e, db) {
-		assert.equal(e, null);
-		winston.log('info', 'Successfully connected to server');
+		if (e) { winston.log('error', e); }
 		findURL(db,'original_url', paramUrl, function(result) {
 			// if we find a match in the database, just return the match
 			if (result) {

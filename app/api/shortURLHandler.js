@@ -1,13 +1,11 @@
-var MongoClient = require('mongodb').MongoClient,
-	assert = require('assert');
+var MongoClient = require('mongodb').MongoClient;
 var winston = require('winston');
 
 var findURL = require('./databaseInteraction/findURL.js');
 
 module.exports = function(paramUrl, dbURL, callback) {
 	MongoClient.connect(dbURL, function(e, db) {
-		assert.equal(e, null);
-		winston.log('info', 'Successfully connected to database');
+		if (e) { winston.log('error', e); }
 		findURL(db, 'short_url', paramUrl, function(result) {
       // if the short url was in the database, return it
       // the api will redirect the user tot he original url

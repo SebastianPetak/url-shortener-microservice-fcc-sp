@@ -1,4 +1,3 @@
-var assert = require('assert');
 var winston = require('winston');
 
 // if the original url wasn't in the database, insert it anad return it
@@ -11,12 +10,7 @@ module.exports = function(db, paramUrl, callback) {
 		{'original_url': paramUrl,
 			'short_url': generateShortUrl()},
 		function(e, result) {
-			if (e) {
-				throw e;
-			}
-			assert.equal(e, null);
-			assert.equal(1, result.result.n);
-			assert.equal(1, result.ops.length);
+			if (e) { winston.log('error', e); }
 			callback(result);
 		});
 };

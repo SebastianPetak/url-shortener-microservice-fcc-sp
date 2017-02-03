@@ -12,7 +12,7 @@ module.exports = function(db, key, paramUrl, callback) {
 	// find document with url the user passed
 	sites.findOne(query, function(e, result) {
 		if (e) {
-			throw e;
+			winston.log('error', e);
 		}	else if (result) {
 			callback(result);
 		}	else {
