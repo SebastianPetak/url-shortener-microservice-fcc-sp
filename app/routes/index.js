@@ -37,6 +37,26 @@ module.exports = function(app, dbURL) {
 			// normalizes url to prevent duplication under different names e.g. https://www.google.com // https://google.com
 			paramUrl = normalizeUrl(paramUrl);
 			winston.log('info', 'Sending normalized URL parameter to URL handler as: ' + paramUrl);
+			originalURLHandler(paramUrl, dbURL).then(function(result) {
+				if (result.ops) {
+					res.status(200).json({
+						original_url: result.ops[0].original_url,
+						short_url: result.ops[0].short_url
+					});
+				} else if (result.original_url) {
+					res.status(200).json({
+						original_url: result.original_url,
+						short_url: result.short_url
+					});
+				}
+			}).catch(function(reason) {
+				winston.log('error', reason);
+				res.status(404).json({
+					error: reason
+				});
+			});
+
+			/*
 			originalURLHandler(paramUrl, dbURL, function(type, response) {
 				// working with response from findURL
 				if (type == 'URLExisted') {
@@ -54,6 +74,7 @@ module.exports = function(app, dbURL) {
 				winston.log('info', 'response has ended\n');
 			});
 		// otherwise parameter wasn't in short url or original url format
+		*/
 		} else {
 			winston.log('info', 'URL parameter is not a valid URL\n');
 			res.status(404).json({
