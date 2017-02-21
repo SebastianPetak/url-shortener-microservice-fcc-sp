@@ -17,8 +17,6 @@ module.exports = function(dbURL, paramUrl) {
 						db.close();
 						winston.log('info', 'Database closed');
 						resolve(result);
-					}).catch(function(reason) {
-						reject(reason);
 					});
 		}).catch(function(reason) {
 			reject(reason);

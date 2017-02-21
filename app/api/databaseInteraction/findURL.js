@@ -18,14 +18,9 @@ module.exports = function(dbURL, key, paramUrl) {
 				db.close();
 				winston.log('info', 'Database Closed');
 				resolve(value);
-			}), function(reason) {
-				db.close();
-				winston.log('info', 'Database Closed');
-				reject(reason);
-			};
+			});
 		})
 		.catch(function(reason) {
-			winston.log('error', reason);
 			reject(reason);
 		});
 	});
