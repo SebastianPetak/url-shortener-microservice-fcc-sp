@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
+    "bluebird": "^3.4.7",
     "ejs": "^2.5.3",
     "express": "^4.14.0",
     "mongodb": "^2.2.11",

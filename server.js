@@ -1,6 +1,7 @@
 'use strict';
 var express = require('express');
 var app = express();
+global.Promise = require('bluebird');
 var winston = require('winston');
 require('winston-mongodb').MongoDB;
 var path = require('path');

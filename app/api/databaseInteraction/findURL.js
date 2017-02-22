@@ -14,8 +14,9 @@ module.exports = function(dbURL, key, paramUrl) {
 		query[key] = paramUrl;
 		return sites.findOne(query);
 	}).then(function(queryResult) {
+		return queryResult;
+	}).finally(function() {
 		db.close();
 		winston.log('info', 'Database closed');
-		return queryResult;
 	});
 };

@@ -16,9 +16,10 @@ module.exports = function(dbURL, paramUrl) {
 			}
 		);
 	}).then(function(queryResult) {
+		return queryResult;
+	}).finally(function() {
 		db.close();
 		winston.log('info', 'Database closed');
-		return queryResult;
 	});
 };
 
