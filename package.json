@@ -11,15 +11,17 @@
     "normalize-url": "^1.8.0",
     "valid-url": "^1.0.9",
     "winston": "^2.3.0",
-    "winston-mongodb": "^2.0.7"
+    "winston-mongodb": "^2.0.7",
+    "yargs": "^6.6.0"
   },
   "devDependencies": {
     "eslint": "^3.13.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "startTest": "node server.js on on on error"
+    "start": "node server.js --consoleLogging='on' --fileLogging='off' --DBLogging='off' --loggingLevel='debug'",
+    "startTest": "node server.js --consoleLogging='on' --fileLogging='on' --DBLogging='on' --loggingLevel='debug'",
+		"startProduction": "node server.js --consoleLogging='on' --fileLogging='Off' --DBLogging='on' --loggingLevel='error'"
   },
   "repository": {
     "type": "git",
