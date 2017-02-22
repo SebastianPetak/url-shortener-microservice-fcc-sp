@@ -50,15 +50,15 @@ module.exports = function(app, dbURL) {
 				// result.ops is response from an MongoDB Insert command
 				// result.original_url is response from MongoDB findOne command
 				// Either way, we want to respond with the result.
-				if (result.ops) {
-					res.status(200).json({
-						original_url: result.ops[0].original_url,
-						short_url: result.ops[0].short_url
-					});
-				} else if (result.original_url) {
+				if (result.original_url !== undefined) {
 					res.status(200).json({
 						original_url: result.original_url,
 						short_url: result.short_url
+					});
+				} else {
+					res.status(200).json({
+						original_url: result.ops[0].original_url,
+						short_url: result.ops[0].short_url
 					});
 				}
 			}).catch(function(reason) {
@@ -67,6 +67,8 @@ module.exports = function(app, dbURL) {
 					error: 'Internal Server Error'
 				});
 			});
+
+		// Otherwsie the url is neither a valid url or a short url.
 		} else {
 			winston.log('info', 'URL parameter is not a valid URL\n');
 			res.status(404).json({
