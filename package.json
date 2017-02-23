@@ -19,9 +19,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js --consoleLogging='on' --fileLogging='off' --DBLogging='off' --loggingLevel='debug'",
-    "startTest": "node server.js --consoleLogging='on' --fileLogging='on' --DBLogging='on' --loggingLevel='debug'",
-		"startProduction": "node server.js --consoleLogging='on' --fileLogging='Off' --DBLogging='on' --loggingLevel='error'"
+    "start": "node server.js --consoleLogging='on' --fileLogging='off' --dbLogging='off' --loggingLevel='debug'",
+    "startTest": "node server.js --consoleLogging='on' --fileLogging='on' --dbLogging='on' --loggingLevel='debug'",
+		"startProduction": "node server.js --consoleLogging='on' --fileLogging='Off' --dbLogging='on' --loggingLevel='error'"
   },
   "repository": {
     "type": "git",
