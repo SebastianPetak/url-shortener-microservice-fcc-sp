@@ -10,56 +10,70 @@ module.exports = function(app, dbURL) {
 		res.render('index');
 	});
 
-	// Matches paramter in short url format
+	// Matches short url
 	app.get(/^\/[0-9]{7}$/, function(req,res) {
 		var paramUrl = req.url.substr(1);
 		winston.log('info', 'Sending URL parameter to short-URL handler');
 		// find and return document with matching short-URL value
-		shortURLHandler(paramUrl, dbURL, function(response) {
-			if (response) {
+		shortURLHandler(paramUrl, dbURL).then(function(result) {
+			if (result) {
 				// this redirects user to the original_url value stored in the database
 				// with status 302 for found
-				res.redirect(response.original_url);
-				winston.log('info', 'User redirected to: ' + response.original_url + '\n');
+				res.redirect(result.original_url);
+				winston.log('info', 'User redirected to: ' + result.original_url + '\n');
 			} else {
 				winston.log('info', 'Short URL does not exist\n');
-				res.status(500).json({error: 'Short URL does not exist'});
+				res.status(404).json({
+					error: 'Short URL does not exist'
+				});
 			}
+		}).catch(function(reason) {
+			winston.log('error', reason);
+			res.status(500).json({
+				error: 'Internal Server Error'
+			});
 		});
 	});
 
+	// Matches original url
 	app.get('/*', function(req,res) {
 		var paramUrl = req.url.substr(1);
 		winston.log('info', 'URL Parameter: ' + paramUrl);
 
-		// if parameter was an original url
+		// if parameter is a valid uri
 		if (validUrl.isUri(paramUrl)) {
-			// normalizes url to prevent duplication under different names e.g. https://www.google.com // https://google.com
+			// normalizes url to prevent duplication under different names
+			// e.g. https://www.google.com // https://google.com
 			paramUrl = normalizeUrl(paramUrl);
 			winston.log('info', 'Sending normalized URL parameter to URL handler as: ' + paramUrl);
-			originalURLHandler(paramUrl, dbURL, function(type, response) {
-				// working with response from findURL
-				if (type == 'URLExisted') {
+			originalURLHandler(paramUrl, dbURL).then(function(result) {
+				// result.ops is response from an MongoDB Insert command
+				// result.original_url is response from MongoDB findOne command
+				// Either way, we want to respond with the result.
+				if (result.original_url !== undefined) {
 					res.status(200).json({
-						original_url: response.original_url,
-						short_url: response.short_url
+						original_url: result.original_url,
+						short_url: result.short_url
 					});
 				} else {
-				// working with response from insertURL
 					res.status(200).json({
-						original_url: response.ops[0].original_url,
-						short_url: response.ops[0].short_url
+						original_url: result.ops[0].original_url,
+						short_url: result.ops[0].short_url
 					});
 				}
-				winston.log('info', 'response has ended\n');
+			}).catch(function(reason) {
+				winston.log('error', reason);
+				res.status(500).json({
+					error: 'Internal Server Error'
+				});
 			});
-		// otherwise parameter wasn't in short url or original url format
+
+		// Otherwsie the url is neither a valid url or a short url.
 		} else {
 			winston.log('info', 'URL parameter is not a valid URL\n');
 			res.status(404).json({
 				error: 'Input is not a valid url'
 			});
-			//res.status(500).json({error: 'No short url found for given input and input is not a valid url'});
 		}
 	});
 };

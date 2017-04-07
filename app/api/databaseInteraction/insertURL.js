@@ -1,18 +1,26 @@
 var winston = require('winston');
+var MongoClient = require('mongodb').MongoClient;
 
 // if the original url wasn't in the database, insert it anad return it
-module.exports = function(db, paramUrl, callback) {
-	// get the sites collection
-	winston.log('info', 'Inserting document...');
-	var collection = db.collection('sites');
-	// insert the url and a newly generated shorturl
-	collection.insert(
-		{'original_url': paramUrl,
-			'short_url': generateShortUrl()},
-		function(e, result) {
-			if (e) { winston.log('error', e); }
-			callback(result);
-		});
+module.exports = function(dbURL, paramUrl) {
+	var db;
+	return MongoClient.connect(dbURL).then(function(database) {
+		db = database;
+		winston.log('info', 'Inserting document...');
+		var collection = db.collection('sites');
+		// insert the url and a newly generated shorturl
+		return collection.insert(
+			{
+				'original_url': paramUrl,
+				'short_url': generateShortUrl()
+			}
+		);
+	}).then(function(queryResult) {
+		return queryResult;
+	}).finally(function() {
+		db.close();
+		winston.log('info', 'Database closed');
+	});
 };
 
 var generateShortUrl = function() {
